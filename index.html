@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cobro con tarjeta</title>
+
+    <link rel="shortcut icon" href="fav.png" type="image/x-png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top " ng-cloack>
+        <div class="float-right">
+            derecha
+        </div>
+    </nav>
+
+    <div id="app" class="container-fluid animated fadeIn" style="margin-top:85px" v-cloak>
+        <div class="row">
+            <div class="alert alert-danger scale-up-center" v-if="showalert">
+                {{msgAlert}}
+            </div>
+        </div>
+        <div class="form-row">            
+            <div class="form-group col-md-4">
+                <label class="control-label">Localidad</label>
+                <select v-model="Clave.Localidad" class="form-control">
+                    <option v-for="item in Localidades" :value="item.Clave">{{item.Nombre}} </option>
+                </select>
+            </div>
+            <div class="form-group col-md-2">
+                <label>Clasificacion</label>
+                <select v-model="Clave.Clasificacion" class="form-control">
+                    <option v-for="item in Clasificaciones" :value="item.Clave">{{item.Nombre}} </option>
+                </select>
+            </div>
+            <div class="form-group col-md-2">
+                <label class="control-label">Clave</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" v-model="Clave.Clave8" placeholder="1- 8 digitos"
+                        ng-pattern="/^[0-9]{1,8}$/">
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-primary" @click="GetDetallePredio"><i
+                                class="fa fa-search"></i>Buscar</button>
+                    </div>
+                </div>
+            </div>
+            <div class="lds-ripple" v-if="loading"><div></div><div></div></div>
+        </div>
+        <Prediodetalle class="fade-in" :predio="dataDetails"></Prediodetalle>
+        <Estadocuenta class="fade-in" :cobros="dataCobros" :asdiferencia="IsDiferencia"></Estadocuenta>
+        
+    </div>
+
+    <script defer src="https://unpkg.com/vue@next"></script>
+
+    <script defer src="components/edocuenta.js"></script>
+    <script defer src="components/Detalle.js"></script>
+    <script defer src="app.js"></script>
+</body>
+
+</html>
