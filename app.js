@@ -5,21 +5,23 @@
         },
         data() {
           return {    
-            //urlServer :"http://catastro.chiapas.gob.mx/Municipios/api/Cobro",
-            urlServer:"http://localhost:5289/api/Cobro",
+            //urlAPI :"http://catastro.chiapas.gob.mx/Municipios/api/",
+            urlAPI:"http://localhost:5289/api/",
             token:"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJSb2wiOiIyIiwiVXN1YXJpb0xvZ2luIjoic2NsYy1vbmxpbmUiLCJNdW5pY2lwaW9DbGF2ZSI6IjA3OCIsIm5iZiI6MTY3Mjc3MTE1MiwiZXhwIjoxNjc1MTkwMzUxLCJpYXQiOjE2NzI3NzExNTJ9.iGc8fajH-eQH14XHpe0AasXYX6dhNdwAK69boeq7MXc",
+            MunicipioClave:'078',
+            Usuario:'sclc-online',
+            
             Clave:{
                 Clasificacion:"0",
-                Municipio:'078',
                 Localidad:"0001",
                 Clave8:"",
                 ClaveCatastral:"00780001"
             }, 
-            Localidades:[{Clave:'0001',Nombre:'San cris'}],
+            Localidades:[],
             Clasificaciones:[
-                    {Clave:'0',Nombre:'Urbano'},
-                    {Clave:'1',Nombre:'Rustico'},
-                    {Clave:'2',Nombre:'Sin estudio'},
+                    {clave:'0',nombre:'Urbano'},
+                    {clave:'1',nombre:'Rustico'},
+                    {clave:'2',nombre:'Sin estudio'},
             ],
             IsDiferencia:false, 
             loading:false,
@@ -27,14 +29,37 @@
             dataDetails:{},
             dataCobros:[],
             msgAlert:'',
-            TipoColindancias:[
-              {"Clave":"1","Nombre":"Uno"},
-              {"Clave":"2","Nombre":"Dos"},
-              {"Clave":"3","Nombre":"Tres"}          
-            ],
           }
         },
         methods:{
+            GetLocalidades() {
+                this.Localidades=[];
+                var myHeaders = new Headers();
+                myHeaders.append("Authorization", this.token);
+                myHeaders.append("Content-Type","application/json; charset=utf-8");
+    
+                var requestOptions = {
+                    method: 'GET',
+                    headers: myHeaders
+                    };
+                this.loading=true;    
+                this.showalert=false;
+                console.log(this.urlAPI + "Catalogo/GetLocalidades/" +this.MunicipioClave+'/'+this.Usuario);
+                fetch(this.urlAPI + "Catalogo/GetLocalidades/" +this.MunicipioClave+'/'+this.Usuario, requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    this.loading=false;
+                    if(result.ok){ 
+                        this.Localidades=JSON.parse(JSON.stringify(result.data));
+                        console.log(this.Localidades)
+                    }
+                    else{
+                        this.msgAlert=result.message;
+                        this.showalert=true;
+                    }
+                })
+                .catch(err=>{this.loading=false;this.showalert=true;this.msgAlert=err;});
+            },
             GetDetallePredio() {
                 
                 this.dataDetails={};
@@ -53,9 +78,9 @@
                         return;
                     }
                 if(this.Clave.Clasificacion=="0")
-                    this.Clave.ClaveCatastral= this.Clave.Clasificacion + this.Clave.Municipio + this.Clave.Localidad + this.Clave.Clave8;
+                    this.Clave.ClaveCatastral= this.Clave.Clasificacion + this.MunicipioClave + this.Clave.Localidad + this.Clave.Clave8;
                 else //rustica
-                    this.Clave.ClaveCatastral= this.Clave.Clasificacion + this.Clave.Municipio + this.Clave.Localidad + ' '+ this.Clave.Clave8;
+                    this.Clave.ClaveCatastral= this.Clave.Clasificacion + this.MunicipioClave + this.Clave.Localidad + ' '+ this.Clave.Clave8;
                 
                 
                 var myHeaders = new Headers();
@@ -69,7 +94,7 @@
                     };
                 this.loading=true;    
                 this.showalert=false;
-                fetch(this.urlServer + "/DetallePredio/" +this.Clave.ClaveCatastral, requestOptions)
+                fetch(this.urlAPI + "Cobro/DetallePredio/" +this.Clave.ClaveCatastral+'/'+this.Usuario, requestOptions)
                 .then(response => response.json())
                 .then(result => {
                     this.loading=false;
@@ -84,8 +109,7 @@
                 })
                 .catch(err=>{this.loading=false;this.showalert=true;this.msgAlert=err;});
             },
-            GetEstadoCuenta(clavecatastral){
-                //$scope.isLoading = true;            
+            GetEstadoCuenta(clavecatastral){         
                 let CantidadEjercicios = this.dataCobros.length;
                 if(CantidadEjercicios==0)
                     CantidadEjercicios=5;
@@ -106,9 +130,9 @@
                     body:bodyParams,
                     redirect: 'follow'
                     };
-                    this.loading=true;
-                    this.showalert=false; 
-                fetch(this.urlServer + "/CalcularImpuesto", requestOptions)
+                this.loading=true;
+                this.showalert=false; 
+                fetch(this.urlAPI + "Cobro/CalcularImpuesto", requestOptions)
                 .then(response => response.json())
                 .then(result => {
                     this.loading=false;
@@ -122,9 +146,8 @@
                     }                    
                 })
                 .catch(err=>{this.loading=false;this.showalert=true;this.msgAlert=err;});
-            }
-            
+            }            
         },
-        
+        mounted(){this.GetLocalidades()}
     })    
     .mount('#app')

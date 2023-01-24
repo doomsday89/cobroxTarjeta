@@ -30,13 +30,13 @@
             <div class="form-group col-md-4">
                 <label class="control-label">Localidad</label>
                 <select v-model="Clave.Localidad" class="form-control">
-                    <option v-for="item in Localidades" :value="item.Clave">{{item.Nombre}} </option>
+                    <option v-for="item in Localidades" :value="item.clave">{{item.nombre}} </option>
                 </select>
             </div>
             <div class="form-group col-md-2">
                 <label>Clasificacion</label>
                 <select v-model="Clave.Clasificacion" class="form-control">
-                    <option v-for="item in Clasificaciones" :value="item.Clave">{{item.Nombre}} </option>
+                    <option v-for="item in Clasificaciones" :value="item.clave">{{item.nombre}} </option>
                 </select>
             </div>
             <div class="form-group col-md-2">
@@ -54,7 +54,6 @@
         </div>
         <Prediodetalle class="fade-in" :predio="dataDetails"></Prediodetalle>
         <Estadocuenta class="fade-in" :cobros="dataCobros" :asdiferencia="IsDiferencia"></Estadocuenta>
-        
     </div>
 
     <script defer src="https://unpkg.com/vue@next"></script>
