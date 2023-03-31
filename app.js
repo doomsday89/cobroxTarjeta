@@ -7,27 +7,26 @@
           return {    
             //urlAPI :"http://catastro.chiapas.gob.mx/Municipios/api/",
             urlAPI:"http://localhost:5289/api/",
-            token:"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJSb2wiOiIyIiwiVXN1YXJpb0xvZ2luIjoic2NsYy1vbmxpbmUiLCJNdW5pY2lwaW9DbGF2ZSI6IjA3OCIsIm5iZiI6MTY3Mjc3MTE1MiwiZXhwIjoxNjc1MTkwMzUxLCJpYXQiOjE2NzI3NzExNTJ9.iGc8fajH-eQH14XHpe0AasXYX6dhNdwAK69boeq7MXc",
-            MunicipioClave:'078',
-            Usuario:'sclc-online',
+            token:"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJSb2wiOiIyIiwiVXN1YXJpb0xvZ2luIjoibXVsdGlwYWdvcy0wNTkiLCJNdW5pY2lwaW9DbGF2ZSI6IjA1OSIsIm5iZiI6MTY4MDI4NDQwOCwiZXhwIjoxNjgwMzcwODA4LCJpYXQiOjE2ODAyODQ0MDh9.ZcmPKsWy13OylJgg_tYq4tbOe17KLoRks55rfh8x4Bk",
+            MunicipioClave:'059', 
+            Usuario:'multipagos-059',
             
             Clave:{
                 Clasificacion:"0",
                 Localidad:"0001",
                 Clave8:"",
-                ClaveCatastral:"00780001"
+                ClaveCatastral:""
             }, 
             Localidades:[],
             Clasificaciones:[
-                    {clave:'0',nombre:'Urbano'},
-                    {clave:'1',nombre:'Rustico'},
-                    {clave:'2',nombre:'Sin estudio'},
+                    {clave:'0',nombre:'Urbano (8 digitos)'},
+                    {clave:'1',nombre:'Rustico (max 7 digs)'},
+                    {clave:'2',nombre:'Sin estudio (max 7 digs)'},
             ],
-            IsDiferencia:false, 
+            IsDiferencia:false,
             loading:false,
             showalert:false,
             dataDetails:{},
-            dataCobros:[],
             msgAlert:'',
           }
         },
@@ -44,14 +43,12 @@
                     };
                 this.loading=true;    
                 this.showalert=false;
-                console.log(this.urlAPI + "Catalogo/GetLocalidades/" +this.MunicipioClave+'/'+this.Usuario);
                 fetch(this.urlAPI + "Catalogo/GetLocalidades/" +this.MunicipioClave+'/'+this.Usuario, requestOptions)
                 .then(response => response.json())
                 .then(result => {
                     this.loading=false;
                     if(result.ok){ 
                         this.Localidades=JSON.parse(JSON.stringify(result.data));
-                        console.log(this.Localidades)
                     }
                     else{
                         this.msgAlert=result.message;
@@ -63,7 +60,7 @@
             GetDetallePredio() {
                 
                 this.dataDetails={};
-                this.dataCobros=[];
+                this.Clave.ClaveCatastral='';
                 //Valirdar
                 if(this.Clave.Clave8.length=='')
                     {
@@ -100,7 +97,7 @@
                     this.loading=false;
                     if(result.ok){ 
                         this.dataDetails=JSON.parse(JSON.stringify(result.data[0]));
-                        this.GetEstadoCuenta(this.Clave.ClaveCatastral);
+                        this.IsDiferencia=this.dataDetails.ultimoPeriodoPago == new Date().getFullYear() ? true : false;
                     }
                     else{
                         this.msgAlert=result.message;
@@ -109,44 +106,6 @@
                 })
                 .catch(err=>{this.loading=false;this.showalert=true;this.msgAlert=err;});
             },
-            GetEstadoCuenta(clavecatastral){         
-                let CantidadEjercicios = this.dataCobros.length;
-                if(CantidadEjercicios==0)
-                    CantidadEjercicios=5;
-                
-                const bodyParams = JSON.stringify({ 
-                    ClaveCatastral: clavecatastral,
-                    CantidadEjercicios:CantidadEjercicios,
-                    Pensionado:false,
-                    Espontaneo:false
-                });
-                const myHeaders = new Headers();
-                myHeaders.append("Authorization", this.token);
-                myHeaders.append("Content-Type","application/json; charset=utf-8");            
-    
-                var requestOptions = {
-                    method: 'POST',
-                    headers: myHeaders,
-                    body:bodyParams,
-                    redirect: 'follow'
-                    };
-                this.loading=true;
-                this.showalert=false; 
-                fetch(this.urlAPI + "Cobro/CalcularImpuesto", requestOptions)
-                .then(response => response.json())
-                .then(result => {
-                    this.loading=false;
-                    if(result.ok){
-                        this.IsDiferencia=this.dataDetails.ultimoPeriodoPago == new Date().getFullYear() ? true : false;
-                        this.dataCobros=result.data; 
-                    }
-                    else{
-                        this.msgAlert=result.message;
-                        this.showalert;
-                    }                    
-                })
-                .catch(err=>{this.loading=false;this.showalert=true;this.msgAlert=err;});
-            }            
         },
         mounted(){this.GetLocalidades()}
     })    

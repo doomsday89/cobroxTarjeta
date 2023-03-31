@@ -1,51 +1,70 @@
-let EstadocuentaComponent ={
-    props:["cobros","asdiferencia"],
-    computed:{
-        CalcularTotal(){
-            return this.cobros.reduce((accumalator, item)=> {return accumalator+item.total},0);
+let EstadocuentaComponent ={    
+    props:["clavecatastral","asdiferencia"],
+    data(){
+        return{
+            urlAPI:"http://localhost:5289/api/",
+            token:"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJSb2wiOiIyIiwiVXN1YXJpb0xvZ2luIjoibXVsdGlwYWdvcy0wNTkiLCJNdW5pY2lwaW9DbGF2ZSI6IjA1OSIsIm5iZiI6MTY4MDI4NDQwOCwiZXhwIjoxNjgwMzcwODA4LCJpYXQiOjE2ODAyODQ0MDh9.ZcmPKsWy13OylJgg_tYq4tbOe17KLoRks55rfh8x4Bk",
+            MunicipioId:'059',
+            amount:19,
+            ref:'',
+            Signature:'',
+            idexpress:'3095',
+            dataCobros:[]
         }
     },
-    template: `
-    <div class="card" v-if="cobros.length>0" v-cloak>
-        <h3 class="card-header">Cobros 
-            <span class="badge badge-pill badge-warning" v-if="asdiferencia">(diferencia)</span>
-        </h3>
-        <div class="card-body">
-            <table class="table table-striped table-bordered">
-                <thead>
-                    <tr>
-                    <td>Ejercicio</td>
-                    <td>Gasto de Ejecucion</td>
-                    <td>Actualización</td>
-                    <td>Descuento</td>
-                    <td>Impuesto</td>
-                    <td>Multa</td>
-                    <td>Recargo</td>
-                    <td>Total</td>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="item in cobros">
-                        <td>{{item.ejercicio}}<span class="glyphicon glyphicon-remove btn ng-hide"
-                            aria-hidden="true" title="Quita cobro más reciente" @click="QuitarCobro()"
-                            v-if="cobros[cobros.length-1].Ejercicio==item.Ejercicio"></span></td>
-                    <td>{{item.gastoEjecucion}}</td>
-                    <td>{{item.actualizacion}}</td>
-                    <td>{{item.descuento}}</td>
-                    <td>{{item.impuesto}}</td>
-                    <td>{{item.multa}}</td>
-                    <td>{{item.recargo}}</td>
-                    <td>$ {{item.total}}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="form-inline breadcrumb float-right">
-                
-                <button type="button" class="btn btn-success btn-lg" @click="GuardarCobro()"
-                    title="Pagar total">Pagar $ {{CalcularTotal}}</button>
-            </div>
-        </div>
-    </div>
-    `,
-    
+    methods:{
+        GetEstadoCuenta(clavecatastral){         
+            this.dataCobros=[];
+            
+            const bodyParams = JSON.stringify({ 
+                ClaveCatastral: clavecatastral,
+                CantidadEjercicios:5,
+                Pensionado:false,
+                Espontaneo:false
+            });
+            const myHeaders = new Headers();
+            myHeaders.append("Authorization", this.token);
+            myHeaders.append("Content-Type","application/json; charset=utf-8");            
+
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body:bodyParams,
+                redirect: 'follow'
+                };
+            this.loading=true;
+            this.showalert=false; 
+            fetch(this.urlAPI + "Cobro/CalcularMultipago", requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                this.loading=false;
+                if(result.ok){                    
+                    this.dataCobros=result.data.calculo;
+                    this.Signature = result.data.signature; 
+                    this.ref = this.clavecatastral.replace(' ','R')
+                }
+                else{
+                    this.msgAlert=result.message;
+                    this.showalert;
+                }                    
+            })
+            .catch(err=>{this.loading=false;this.showalert=true;this.msgAlert=err;});
+        },
+         
+    },
+    computed:{
+        CalcularTotal(){
+            if(this.dataCobros.length>0)
+                this.amount=this.dataCobros.reduce((accumalator, item)=>  accumalator+item.total,0);
+                this.amount= this.amount.toFixed(2);
+                return this.amount;
+        }
+    },
+    watch:{
+        clavecatastral: function (value, oldValue) {            
+            this.GetEstadoCuenta(value);
+        }
+        
+    },
+    template: '#edocuenta-template'    
 };

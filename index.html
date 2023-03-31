@@ -14,10 +14,9 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top " ng-cloack>
-        <div class="float-right">
-            derecha
-        </div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top " v-cloack>
+        <img src='logo-059.png' alt='logo' style='height:60px;width:90px'/>
+        <h2 class="text-white">Multipagos :: COBRO PREDIAL</>
     </nav>
 
     <div id="app" class="container-fluid animated fadeIn" style="margin-top:85px" v-cloak>
@@ -25,6 +24,7 @@
             <div class="alert alert-danger scale-up-center" v-if="showalert">
                 {{msgAlert}}
             </div>
+            <div>Seleccione Municipio-Localidad-Clasificación y escriba la clave catastral           </div>
         </div>
         <div class="form-row">            
             <div class="form-group col-md-4">
@@ -53,13 +53,112 @@
             <div class="lds-ripple" v-if="loading"><div></div><div></div></div>
         </div>
         <Prediodetalle class="fade-in" :predio="dataDetails"></Prediodetalle>
-        <Estadocuenta class="fade-in" :cobros="dataCobros" :asdiferencia="IsDiferencia"></Estadocuenta>
+        <Estadocuenta class="fade-in" :clavecatastral="Clave.ClaveCatastral" :asdiferencia="IsDiferencia" ></Estadocuenta>
     </div>
 
-    <script defer src="https://unpkg.com/vue@next"></script>
+    <script type="text/x-template" id="detalle-template">
+        <div v-if="JSON.stringify(predio) !== '{}'">
+        <fieldset>
+            <legend>
+                <a href="#" @click="toggle=!toggle" class="dropdown-toggle">Datos generales</a>
+            </legend>
+            <div v-if="toggle"  class="animated">
+                <div class="row">
+                    <label class="col-form-label col-md-2">Clave</label>
+                    <div class="col-md-3">
+                        <label class="form-control">{{predio.claveCatastral}}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-form-label col-md-2">Propietario</label>
+                    <div class="col-md-6">
+                        <label class="form-control">{{predio.nombrePropietario}}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-form-label col-md-2">Ubicacion</label>
+                    <div class="col-md-6">
+                        <label class="form-control">{{predio.ubicacionPredio}}</label>
+                    </div>
+                </div>
 
-    <script defer src="components/edocuenta.js"></script>
+                <div class="row" v-if="predio.IsRustico">
+                    <label class="col-form-label col-md-2">Nombre Predio</label>
+                    <div class="col-md-6">
+                        <label class="form-control">{{predio.nombrePredio}}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-form-label col-md-2">Area</label>
+                    <div class="col-md-3">
+                        <label class="form-control">{{predio.area }}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-form-label col-md-2">Valor Fiscal</label>
+                    <div class="col-md-3">
+                        <label class="form-control">{{predio.valorCatastral}}</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-form-label col-md-2">UltimoPeriodoPago</label>
+                    <div class="col-md-3">
+                        <label class="form-control">{{predio.ultimoPeriodoPago}}</label>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        </div>
+    </script>
+    <script type="text/x-template" id="edocuenta-template">
+        <div class="card" v-if="dataCobros.length>0" v-cloak>
+        <h3 class="card-header">Cobros 
+            <span class="badge badge-pill badge-warning" v-if="asdiferencia">(diferencia)</span>
+        </h3>
+        <div class="card-body">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                    <td>Ejercicio</td>
+                    <td>Gasto de Ejecucion</td>
+                    <td>Actualización</td>
+                    <td>Descuento</td>
+                    <td>Impuesto</td>
+                    <td>Multa</td>
+                    <td>Recargo</td>
+                    <td>Total</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in dataCobros">
+                        <td>{{item.ejercicio}}</td>
+                        <td>{{item.gastoEjecucion}}</td>
+                        <td>{{item.actualizacion}}</td>
+                        <td>{{item.descuento}}</td>
+                        <td>{{item.impuesto}}</td>
+                        <td>{{item.multa}}</td>
+                        <td>{{item.recargo}}</td>
+                        <td>$ {{item.total}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <form action="https://www.adquiramexico.com.mx:443/mExpress/pago/avanzado" method="post" class="float-right">
+                <input type="hidden" name="importe" :value="amount"/>
+                <input type="hidden" name="referencia" :value="ref"/>
+                <input type="hidden" name="urlretorno" value="http://www.ocosingo.gob.mx"/>
+                <input type="hidden" name="idexpress" :value="idexpress"/>
+                <input type="hidden" name="financiamiento" value="0"/>
+                <input type="hidden" name="plazos" value=""/>
+                <input type="hidden" name="mediospago" value="110000"/>
+                <input type="hidden" name="signature" :value="Signature"/>                
+                <button type="submit" class="btn btn-success btn-lg" title="Pagar total">Pagar $ {{CalcularTotal}}</button>
+            </form>
+        </div>
+    </div>
+    </script>
+    <script defer src="https://unpkg.com/vue@next"></script>
     <script defer src="components/Detalle.js"></script>
+    <script defer src="components/edocuenta.js"></script>
     <script defer src="app.js"></script>
 </body>
 
