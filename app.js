@@ -5,11 +5,6 @@
         },
         data() {
           return {    
-            //urlAPI :"http://catastro.chiapas.gob.mx/Municipios/api/",
-            urlAPI:"http://localhost:5289/api/",
-            token:"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJSb2wiOiIyIiwiVXN1YXJpb0xvZ2luIjoibXVsdGlwYWdvcy0wNTkiLCJNdW5pY2lwaW9DbGF2ZSI6IjA1OSIsIm5iZiI6MTY4MDI4NDQwOCwiZXhwIjoxNjgwMzcwODA4LCJpYXQiOjE2ODAyODQ0MDh9.ZcmPKsWy13OylJgg_tYq4tbOe17KLoRks55rfh8x4Bk",
-            MunicipioClave:'059', 
-            Usuario:'multipagos-059',
             
             Clave:{
                 Clasificacion:"0",
@@ -34,7 +29,7 @@
             GetLocalidades() {
                 this.Localidades=[];
                 var myHeaders = new Headers();
-                myHeaders.append("Authorization", this.token);
+                myHeaders.append("Authorization", token);
                 myHeaders.append("Content-Type","application/json; charset=utf-8");
     
                 var requestOptions = {
@@ -43,10 +38,18 @@
                     };
                 this.loading=true;    
                 this.showalert=false;
-                fetch(this.urlAPI + "Catalogo/GetLocalidades/" +this.MunicipioClave+'/'+this.Usuario, requestOptions)
-                .then(response => response.json())
+                fetch(urlAPI + "Catalogo/GetLocalidades/" + MunicipioClave+'/'+Usuario, requestOptions)
+                .then(response => {
+                    if(response.ok)
+                        return response.json();
+                })
                 .then(result => {
                     this.loading=false;
+                    if(result==undefined){
+                        this.msgAlert='SERVICIO NO AUTORIZADO'
+                        this.showalert=true;
+                        return;
+                    }
                     if(result.ok){ 
                         this.Localidades=JSON.parse(JSON.stringify(result.data));
                     }
@@ -55,7 +58,9 @@
                         this.showalert=true;
                     }
                 })
-                .catch(err=>{this.loading=false;this.showalert=true;this.msgAlert=err;});
+                .catch(err=>{
+                    this.loading=false;this.showalert=true;this.msgAlert=err;
+                });
             },
             GetDetallePredio() {
                 
@@ -75,13 +80,13 @@
                         return;
                     }
                 if(this.Clave.Clasificacion=="0")
-                    this.Clave.ClaveCatastral= this.Clave.Clasificacion + this.MunicipioClave + this.Clave.Localidad + this.Clave.Clave8;
+                    this.Clave.ClaveCatastral= this.Clave.Clasificacion + MunicipioClave + this.Clave.Localidad + this.Clave.Clave8;
                 else //rustica
-                    this.Clave.ClaveCatastral= this.Clave.Clasificacion + this.MunicipioClave + this.Clave.Localidad + ' '+ this.Clave.Clave8;
+                    this.Clave.ClaveCatastral= this.Clave.Clasificacion + MunicipioClave + this.Clave.Localidad + ' '+ this.Clave.Clave8;
                 
                 
                 var myHeaders = new Headers();
-                myHeaders.append("Authorization", this.token);
+                myHeaders.append("Authorization", token);
                 myHeaders.append("Content-Type","application/json; charset=utf-8");
                 myHeaders.append("Access-Control-Allow-Origin","*");
     
@@ -91,7 +96,7 @@
                     };
                 this.loading=true;    
                 this.showalert=false;
-                fetch(this.urlAPI + "Cobro/DetallePredio/" +this.Clave.ClaveCatastral+'/'+this.Usuario, requestOptions)
+                fetch(urlAPI + "Cobro/DetallePredio/" +this.Clave.ClaveCatastral+'/'+Usuario, requestOptions)
                 .then(response => response.json())
                 .then(result => {
                     this.loading=false;

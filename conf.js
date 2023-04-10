@@ -1,0 +1,5 @@
+urlAPI="http://localhost:5289/api/"
+token="Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJSb2wiOiIyIiwiVXN1YXJpb0xvZ2luIjoibXVsdGlwYWdvcy0wNTkiLCJNdW5pY2lwaW9DbGF2ZSI6IjA1OSIsIm5iZiI6MTY4MTEzODIyMiwiZXhwIjoxNjgxMzk3NDIyLCJpYXQiOjE2ODExMzgyMjJ9.bfRGvYfTR4lfeLOpm_9I8cFSG8vlPp_vJ3OUMGjXAQk"
+MunicipioClave='059'
+Usuario='multipagos-059'
+urlreturn='http://catastro.chiapas.gob.mx/multipagos/confirm'

@@ -1,14 +1,12 @@
 let EstadocuentaComponent ={    
     props:["clavecatastral","asdiferencia"],
     data(){
-        return{
-            urlAPI:"http://localhost:5289/api/",
-            token:"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJSb2wiOiIyIiwiVXN1YXJpb0xvZ2luIjoibXVsdGlwYWdvcy0wNTkiLCJNdW5pY2lwaW9DbGF2ZSI6IjA1OSIsIm5iZiI6MTY4MDI4NDQwOCwiZXhwIjoxNjgwMzcwODA4LCJpYXQiOjE2ODAyODQ0MDh9.ZcmPKsWy13OylJgg_tYq4tbOe17KLoRks55rfh8x4Bk",
-            MunicipioId:'059',
+        return{            
             amount:19,
             ref:'',
             Signature:'',
             idexpress:'3095',
+            urlretorno:urlreturn,
             dataCobros:[]
         }
     },
@@ -23,7 +21,7 @@ let EstadocuentaComponent ={
                 Espontaneo:false
             });
             const myHeaders = new Headers();
-            myHeaders.append("Authorization", this.token);
+            myHeaders.append("Authorization", token);
             myHeaders.append("Content-Type","application/json; charset=utf-8");            
 
             var requestOptions = {
@@ -34,7 +32,7 @@ let EstadocuentaComponent ={
                 };
             this.loading=true;
             this.showalert=false; 
-            fetch(this.urlAPI + "Cobro/CalcularMultipago", requestOptions)
+            fetch(urlAPI + "Cobro/CalcularMultipago", requestOptions)
             .then(response => response.json())
             .then(result => {
                 this.loading=false;

@@ -145,7 +145,7 @@
             <form action="https://www.adquiramexico.com.mx:443/mExpress/pago/avanzado" method="post" class="float-right">
                 <input type="hidden" name="importe" :value="amount"/>
                 <input type="hidden" name="referencia" :value="ref"/>
-                <input type="hidden" name="urlretorno" value="http://www.ocosingo.gob.mx"/>
+                <input type="hidden" name="urlretorno" :value="urlretorno"/>
                 <input type="hidden" name="idexpress" :value="idexpress"/>
                 <input type="hidden" name="financiamiento" value="0"/>
                 <input type="hidden" name="plazos" value=""/>
@@ -157,6 +157,7 @@
     </div>
     </script>
     <script defer src="https://unpkg.com/vue@next"></script>
+    <script defer src="conf.js"></script>
     <script defer src="components/Detalle.js"></script>
     <script defer src="components/edocuenta.js"></script>
     <script defer src="app.js"></script>

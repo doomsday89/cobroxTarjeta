@@ -8,10 +8,9 @@
 </head>
 <body>
     <p id="msg">Espere por favor...</p>
+    <script src="conf.js"></script>
     <script>
         const searchParams = new URLSearchParams(location.search);
-        const urlAPI="http://localhost:5289/api/";
-        const token="Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJSb2wiOiIyIiwiVXN1YXJpb0xvZ2luIjoibXVsdGlwYWdvcy0wNTkiLCJNdW5pY2lwaW9DbGF2ZSI6IiIsIm5iZiI6MTY4MDE5MTM2MiwiZXhwIjoxNjgwMjc3NzYyLCJpYXQiOjE2ODAxOTEzNjJ9.YS-acga6P-dDg9GD4YSWODc-FLbW7FZlSwArknXbUsg";
         const codigo=searchParams.get("codigo");
         const autorizacion = searchParams.get("autorizacion");
         const referencia = encodeURI(searchParams.get("referencia"));  
@@ -35,15 +34,17 @@
                     redirect: 'follow'
                 };
         fetch(`${urlAPI}Cobro/ConfirmaMultipago?ClaveCatastral=${referencia}`, requestOptions)
-        .then(response => response.json())
-        .then(result => {
+        .then(response => {
+            if(response.ok) return response.json()
+        })
+        .then(result => {            
             if(result.ok){                    
                     msg.innerHTML='Redireccionando...';
                     if(Municipio=='059')
                         location.href="htpp://www.ocosingo.gob.mx"                    
             }            
             else
-                msg.innerHTML=`status: ${result.status}: ${result.title}`;
+                msg.innerHTML=`error: ${result.message}`;
         })
         .catch(err=>{msg.innerHTML=err;});
     }
