@@ -18,10 +18,11 @@
         const bodyParams = { };
         const myHeaders = new Headers();
         const msg=document.getElementById('msg');
+        const ulrRedirect="www.ocosingo.gob.mx";
 
         if(codigo!=0){
             msg.innerHTML=`codigo ${codigo}. Redireccionando...`
-            location.href="localhost:5500/";
+            location.href=ulrRedirect;
         }
         else{
         myHeaders.append("Authorization", token);
@@ -41,7 +42,7 @@
             if(result.ok){                    
                     msg.innerHTML='Redireccionando...';
                     if(Municipio=='059')
-                        location.href="htpp://www.ocosingo.gob.mx"                    
+                        location.href=ulrRedirect;
             }            
             else
                 msg.innerHTML=`error: ${result.message}`;
