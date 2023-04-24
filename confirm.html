@@ -18,7 +18,7 @@
         const bodyParams = { };
         const myHeaders = new Headers();
         const msg=document.getElementById('msg');
-        const ulrRedirect="www.ocosingo.gob.mx";
+        const ulrRedirect=urlreturn;
 
         if(codigo!=0){
             msg.innerHTML=`codigo ${codigo}. Redireccionando...`
@@ -34,7 +34,7 @@
                     body:bodyParams,
                     redirect: 'follow'
                 };
-        fetch(`${urlAPI}Cobro/ConfirmaMultipago?ClaveCatastral=${referencia}`, requestOptions)
+        fetch(`${urlAPI}Cobro/ConfirmaMultipago?ClaveCatastral=${referencia}&autorizacion=${autorizacion}`, requestOptions)
         .then(response => {
             if(response.ok) return response.json()
         })
