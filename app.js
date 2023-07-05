@@ -42,11 +42,14 @@
                 .then(response => {
                     if(response.ok)
                         return response.json();
+                    else{
+                        return response;
+                    }
                 })
                 .then(result => {
                     this.loading=false;
-                    if(result==undefined){
-                        this.msgAlert='SERVICIO NO AUTORIZADO'
+                    if(!result.ok){
+                        this.msgAlert=`${result.status}:${result.statusText}`;
                         this.showalert=true;
                         return;
                     }

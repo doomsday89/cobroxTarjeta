@@ -8,6 +8,7 @@
 </head>
 <body>
     <p id="msg">Espere por favor...</p>
+    <a href='http://www.ocosingo.gob.mx'>continuar</a>
     <script src="conf.js"></script>
     <script>
         const urlOrigen='http://www.ocosingo.gob.mx';
@@ -15,27 +16,22 @@
         if(searchParams.size)
             Guardar(searchParams);
         else{
-            msg.innerHTML='Cobro NO registrado en CATASTRO!';
-            setTimeout(() => {
-                location.href=urlOrigen;
-            }, 3000);
+            msg.innerHTML='Cobro NO registrado en CATASTRO!';            
         }
 
         function Guardar(searchParams){
             const codigo=searchParams.get("codigo");
+            const mensaje=searchParams.get("mensaje");
             const autorizacion = searchParams.get("autorizacion");
             const referencia = encodeURI(searchParams.get("referencia"));  
             const Municipio =referencia.substring(1,4);
             const bodyParams = { };
             const myHeaders = new Headers();
             const msg=document.getElementById('msg');
-            const ulrRedirect=urlreturn;
+            
 
             if(codigo!=0){
-                msg.innerHTML=`codigo ${codigo}. Redireccionando...`
-                setTimeout(() => {
-                    location.href=urlOrigen;
-                }, 3000);
+                msg.innerHTML=`codigo ${codigo}: ${mensaje}`;
                 return;
             }
             else{

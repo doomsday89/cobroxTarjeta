@@ -2,4 +2,4 @@ urlAPI="http://catastro.chiapas.gob.mx/Municipios/api/"
 token="Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJSb2wiOiIyIiwiVXN1YXJpb0xvZ2luIjoibXVsdGlwYWdvcy0wNTkiLCJNdW5pY2lwaW9DbGF2ZSI6IjA1OSIsIm5iZiI6MTY4MTQwNDU0MCwiZXhwIjoxNjgxNjYzNzQwLCJpYXQiOjE2ODE0MDQ1NDB9.BMmhzgxbt9NiBfXpayKB0tfCNs9TDwuOqe_TczwrZ4s"
 MunicipioClave='059'
 Usuario='multipagos-059'
-urlreturn='http://catastro.chiapas.gob.mx/multipagos/confirm.html'
+urlreturn='http://catastro.chiapas.gob.mx/multipagos/confirm.aspx'

@@ -5,7 +5,7 @@ let EstadocuentaComponent ={
             amount:19,
             ref:'',
             Signature:'',
-            idexpress:'3095',
+            idexpress:IdExpress,
             urlretorno:urlreturn,
             dataCobros:[]
         }
@@ -39,7 +39,7 @@ let EstadocuentaComponent ={
                 if(result.ok){                    
                     this.dataCobros=result.data.calculo;
                     this.Signature = result.data.signature; 
-                    this.ref = this.clavecatastral.replace(' ','R')
+                    this.ref = this.dataCobros[0].claveCatastral.replace(' ','R')
                 }
                 else{
                     this.msgAlert=result.message;

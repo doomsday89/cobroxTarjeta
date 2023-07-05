@@ -23,10 +23,12 @@
         <div class="row">
             <div class="alert alert-danger scale-up-center" v-if="showalert">
                 {{msgAlert}}
-            </div>
-            <div>Seleccione Municipio-Localidad-Clasificación y escriba la clave catastral           </div>
+            </div>            
         </div>
-        <div class="form-row">            
+        <div class="row">
+            <p>Seleccione Municipio-Localidad-Clasificación y escriba la clave catastral</p>
+        </div>
+        <div class="form-row"> 
             <div class="form-group col-md-4">
                 <label class="control-label">Localidad</label>
                 <select v-model="Clave.Localidad" class="form-control">
@@ -64,7 +66,7 @@
             </legend>
             <div v-if="toggle"  class="animated">
                 <div class="row">
-                    <label class="col-form-label col-md-2">Clave</label>
+                    <label class="col-form-label col-md-2">Referencia</label>
                     <div class="col-md-3">
                         <label class="form-control">{{predio.claveCatastral}}</label>
                     </div>
