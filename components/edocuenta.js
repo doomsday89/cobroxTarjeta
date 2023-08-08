@@ -7,18 +7,45 @@ let EstadocuentaComponent ={
             Signature:'',
             idexpress:IdExpress,
             urlretorno:urlreturn,
-            dataCobros:[]
+            dataCobros: [],
+            pagando:false
         }
     },
-    methods:{
+    methods: {
+        preSave() {
+            const myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json; charset=utf-8");  
+            var requestOptions = {
+                method: 'POST',
+                headers: myHeaders,
+                body: JSON.stringify({ Referencia: this.ref }),
+                redirect:'follow'
+            };
+            this.pagando = true;            
+            this.showalert = false;
+            fetch("../confirm.aspx/PreSave", requestOptions)
+                .then(response => response.json())
+                .then(result => {
+                    this.pagando = false;
+                    if (result.d>0) {
+                        console.log('ok, redirecting...');
+                        this.$refs.formBank.submit();
+                    }
+                    else {
+                        console.log('only redirecting!');
+                    }
+                })
+                .catch(err => { this.pagando = false; this.showalert = true; this.msgAlert = err; });
+        },
         GetEstadoCuenta(clavecatastral){         
             this.dataCobros=[];
             
             const bodyParams = JSON.stringify({ 
                 ClaveCatastral: clavecatastral,
                 CantidadEjercicios:5,
-                Pensionado:false,
-                Espontaneo:false
+                IsPensionado:false,
+                IsEspontaneo: false,
+                IsCondonacion:false
             });
             const myHeaders = new Headers();
             myHeaders.append("Authorization", token);
@@ -43,7 +70,7 @@ let EstadocuentaComponent ={
                 }
                 else{
                     this.msgAlert=result.message;
-                    this.showalert;
+                    this.showalert=true;
                 }                    
             })
             .catch(err=>{this.loading=false;this.showalert=true;this.msgAlert=err;});

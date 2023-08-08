@@ -19,13 +19,14 @@
                     {clave:'2',nombre:'Sin estudio (max 7 digs)'},
             ],
             IsDiferencia:false,
-            loading:false,
+            loading: false,
             showalert:false,
+            showhelp:false,
             dataDetails:{},
             msgAlert:'',
           }
         },
-        methods:{
+        methods: {
             GetLocalidades() {
                 this.Localidades=[];
                 var myHeaders = new Headers();
@@ -113,7 +114,7 @@
                     }
                 })
                 .catch(err=>{this.loading=false;this.showalert=true;this.msgAlert=err;});
-            },
+            }            
         },
         mounted(){this.GetLocalidades()}
     })    
